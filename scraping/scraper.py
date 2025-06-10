@@ -10,7 +10,7 @@ from helpers.read_config import read_config
 from database.s3_client import upload_html
 
 
-S3_BUCKET_NAME = 'linkedin-jobs-data'
+S3_BUCKET_NAME = read_config("s3")["bucket_name"]
 proxy_config = read_config("oxylabs")
 
 def get_proxy():
