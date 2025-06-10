@@ -10,20 +10,14 @@ from fake_useragent import UserAgent
 
 from helpers.read_config import read_config
 from database.s3_client import upload_html
+from helpers import logger
 
+
+logger = logging.getLogger('scraping_logger')
 
 S3_BUCKET_NAME = read_config("s3")["bucket_name"]
 proxy_config = read_config("oxylabs")
 ua = UserAgent()
-
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s %(levelname)s %(message)s',
-    handlers=[
-        logging.StreamHandler(),  # Log to console
-        logging.FileHandler('scraper.log')
-    ]
-)
 
 def get_proxy() -> str:
     username = proxy_config["username"]
@@ -64,7 +58,7 @@ def scrape_jobs(pages: int):
             url = f"https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=Software%20Engineer&location=United%20States&start={i}&f_TPR=r86400"
             response = proxy_request(url)
         except Exception as e:
-            logging.error(f"Error fetching job listings at start={i}: {e}")
+            logger.error(f"Error fetching job listings at start={i}: {e}")
             break
         html_str = response.decode('utf-8')
         scrape_page(html_str)
@@ -82,7 +76,7 @@ def scrape_page(html: str):
                 s3_key = f"{date.today()}/{job_id}"
                 upload_html(html_str, s3_key, S3_BUCKET_NAME)
             except Exception as e:
-                logging.error(f"Error scraping job {job_id}: {e}")
+                logger.error(f"Error scraping job {job_id}: {e}")
                 continue
 
 if __name__ == "__main__":
