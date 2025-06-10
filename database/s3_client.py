@@ -1,7 +1,17 @@
 import boto3
 import gzip
 import io
+import logging
 
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)s %(message)s',
+    handlers=[
+        logging.StreamHandler(),  # Log to console
+        logging.FileHandler('s3_client.log')
+    ]
+)
 
 def upload_html(html_data: str, object_key: str, bucket_name: str):
     s3_client = boto3.client("s3")
@@ -16,9 +26,9 @@ def upload_html(html_data: str, object_key: str, bucket_name: str):
                 'ContentEncoding': 'gzip'
             }
         )
-        print(f"Uploaded to '{bucket_name}/{object_key}' successfully.")
+        logging.info(f"Uploaded to '{bucket_name}/{object_key}' successfully.")
     except Exception as e:
-        print(f"An error occurred: {e}")
+        logging.error(f"An error occurred: {e}")
     
 def compress_html(html_data: str):
     compressed_buffer = io.BytesIO()
