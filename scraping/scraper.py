@@ -35,8 +35,11 @@ def scrape_jobs(pages: int):
     opener.addheaders = [("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36")]
     
     for i in range(0, pages * 25, 25):
-        url = f"https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=Software%20Engineer&location=United%20States&start={i}&f_TPR=r86400"
-        response = opener.open(url)
+        try:
+            url = f"https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=Software%20Engineer&location=United%20States&start={i}&f_TPR=r86400"
+            response = opener.open(url)
+        except:
+            break
         scrape_page(response.read(), opener)
         time.sleep(random.uniform(2, 5))
 
