@@ -16,9 +16,10 @@ from database.s3_client import upload_html
 from helpers import logger
 
 
-logger = logging.getLogger('scraping_logger')
-
 S3_BUCKET_NAME = read_config("s3")["bucket_name"]
+SOFTWARE_ENGINEER_URL = f"https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=Software%20Engineer&location=United%20States&start={i}&f_TPR=r86400"
+DATA_ENGINEER_URL = f"https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=Data%20Engineer&location=United%20States&start={i}&f_TPR=r86400"
+logger = logging.getLogger('scraping_logger')
 proxy_config = read_config("oxylabs")
 ua = UserAgent()
 
@@ -63,7 +64,7 @@ def proxy_request(url: str, max_retries: int = 3) -> bytes:
 
     raise last_exception
 
-def scrape_jobs(max_workers=10, job_workers=40, jobs_per_page=25, max_pages=100):
+def scrape_jobs(url: str,max_workers=10, job_workers=40, jobs_per_page=25, max_pages=100):
     queue = Queue()
     queue.put(0)
     visited = set()
@@ -83,7 +84,7 @@ def scrape_jobs(max_workers=10, job_workers=40, jobs_per_page=25, max_pages=100)
                 visited.add(start)
 
             try:
-                html_str = scrape_jobs_by_index(start)
+                html_str = scrape_jobs_by_index(start, url)
             except Exception as e:
                 logger.error(f"Error scraping page starting at {start}: {e}")
                 queue.task_done()
@@ -103,8 +104,8 @@ def scrape_jobs(max_workers=10, job_workers=40, jobs_per_page=25, max_pages=100)
             page_executor.submit(worker, job_executor)
         queue.join()
 
-def scrape_jobs_by_index(i: int):
-    url = f"https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=Software%20Engineer&location=United%20States&start={i}&f_TPR=r86400"
+def scrape_jobs_by_index(i: int, url: str):
+    url = url
     response = proxy_request(url)
     return response.decode('utf-8')
 
@@ -132,4 +133,5 @@ def process_job_card(job_card):
             logger.error(f"Error scraping job {job_id}: {e}")
 
 if __name__ == "__main__":
-    scrape_jobs()
+    scrape_jobs(SOFTWARE_ENGINEER_URL)
+    scrape_jobs(DATA_ENGINEER_URL)
