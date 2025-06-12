@@ -58,20 +58,19 @@ for job_id, job in parsed_job_data.items():
     cur.execute("""
         INSERT INTO jobs (job_id, title, company, location, level, years_experience_min, years_experience_max, url, posted_date)
         VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
-        ON CONFLICT (job_id) DO NOTHING
     """, (
         job_id, job["title"], job["company"], job["location"], job["level"],
         job["years_experience_min"], job["years_experience_max"], job["url"], job["date"]
     ))
-
+    
     # Insert salary
-    cur.execute("""
-        INSERT INTO salary (job_id, amount_min, amount_max, time_unit, currency)
-        VALUES (%s,%s,%s,%s,%s)
-        ON CONFLICT (job_id) DO NOTHING
-    """, (
-        job_id, job["salary_min"], job["salary_max"], job["salary_unit"], "USD"
-    ))
+    if job["salary_min"] is not None:
+        cur.execute("""
+            INSERT INTO salary (job_id, amount_min, amount_max, time_unit, currency)
+            VALUES (%s,%s,%s,%s,%s)
+        """, (
+            job_id, job["salary_min"], job["salary_max"], job["salary_unit"], "USD"
+        ))
 
     # Insert job_skills
     for skill in job["found_skills"]:
@@ -80,7 +79,6 @@ for job_id, job in parsed_job_data.items():
             cur.execute("""
                 INSERT INTO job_skills (job_id, skill_id)
                 VALUES (%s, %s)
-                ON CONFLICT (job_id, skill_id) DO NOTHING
             """, (job_id, skill_id))
 
 conn.commit()

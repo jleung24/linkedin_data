@@ -93,7 +93,7 @@ def parse_job_html(html: str, job_id: str, date: str, parsed_job_data: dict):
         salary_max = cleanup_salary(salary.split(" - ")[1])
         salary_unit = salary.split(" - ")[0].split("/")[1]
     except:
-        salary_max = salary_min = None
+        salary_max = salary_min = salary_unit = None
     
     found_skills = []
     if description:
