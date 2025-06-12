@@ -57,17 +57,20 @@ WORD_TO_NUM = {
 }
 
 
-def process_s3(folder_date: str):
+def process_s3(folder_date: str) -> dict:
     job_data = get_html(S3_BUCKET_NAME, folder_date)
+    parsed_job_data = {}
     for key, value in job_data.items():
         job_id = key.split("/")[1]
         key_date = key.split("/")[0]
         try:
-            parse_job_html(value, job_id, key_date)
+            parse_job_html(value, job_id, key_date, parsed_job_data)
         except:
             continue
+    
+    return parsed_job_data
 
-def parse_job_html(html: str, job_id: str, date: str):
+def parse_job_html(html: str, job_id: str, date: str, parsed_job_data: dict):
     job_soup = BeautifulSoup(html, 'html.parser')
     
     title = job_soup.select_one("h2.top-card-layout__title").get_text(strip=True)
@@ -114,6 +117,20 @@ def parse_job_html(html: str, job_id: str, date: str):
                 
                 if years_experience_max is None or years > years_experience_max:
                     years_experience_max = years
+
+    parsed_job_data[job_id] = {}
+    parsed_job_data[job_id]['title'] = title
+    parsed_job_data[job_id]['company'] = company
+    parsed_job_data[job_id]['location'] = location
+    parsed_job_data[job_id]['level'] = level
+    parsed_job_data[job_id]['url'] = url
+    parsed_job_data[job_id]['years_experience_min'] = years_experience_min
+    parsed_job_data[job_id]['years_experience_max'] = years_experience_max
+    parsed_job_data[job_id]['salary_min'] = salary_min
+    parsed_job_data[job_id]['salary_max'] = salary_max
+    parsed_job_data[job_id]['salary_unit'] = salary_unit
+    parsed_job_data[job_id]['found_skills'] = found_skills
+    parsed_job_data[job_id]['date'] = date
    
 def flatten_list_of_tuple(tuple_list: list) -> list:
     flat_list = []
