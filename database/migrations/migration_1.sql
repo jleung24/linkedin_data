@@ -7,6 +7,7 @@ CREATE TABLE jobs (
     years_experience_min INTEGER,
     years_experience_max INTEGER,
     url VARCHAR(200)
+    posted_date DATE
 );
 
 CREATE TABLE skills (
