@@ -1,6 +1,6 @@
 CREATE TABLE jobs (
     job_id BIGINT PRIMARY KEY,
-    title VARCHAR(100),
+    title VARCHAR(300),
     company VARCHAR(50),
     location VARCHAR(50),
     level VARCHAR(50),
