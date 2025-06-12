@@ -17,8 +17,6 @@ from linkedin_data.helpers import logger
 
 
 S3_BUCKET_NAME = read_config("s3")["bucket_name"]
-SOFTWARE_ENGINEER_KEYWORD = "Software%20Engineer"
-DATA_ENGINEER_KEYWORD = "Data%20Engineer"
 logger = logging.getLogger('scraping_logger')
 proxy_config = read_config("oxylabs")
 ua = UserAgent()
@@ -64,7 +62,7 @@ def proxy_request(url: str, max_retries: int = 3) -> bytes:
 
     raise last_exception
 
-def scrape_jobs(keyword: str, max_workers=10, job_workers=40, jobs_per_page=25, max_pages=100):
+def scrape_jobs(keyword: str, job_age_seconds: int, max_workers=10, job_workers=40, jobs_per_page=25, max_pages=100):
     queue = Queue()
     queue.put(0)
     visited = set()
@@ -84,7 +82,7 @@ def scrape_jobs(keyword: str, max_workers=10, job_workers=40, jobs_per_page=25, 
                 visited.add(start)
 
             try:
-                html_str = scrape_jobs_by_index(start, keyword)
+                html_str = scrape_jobs_by_index(start, keyword, job_age_seconds)
             except Exception as e:
                 logger.error(f"Error scraping page starting at {start}: {e}")
                 queue.task_done()
@@ -104,8 +102,8 @@ def scrape_jobs(keyword: str, max_workers=10, job_workers=40, jobs_per_page=25, 
             page_executor.submit(worker, job_executor)
         queue.join()
 
-def scrape_jobs_by_index(i: int, keyword: str):
-    url = f"https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords={keyword}&location=United%20States&start={i}&f_TPR=r86400"
+def scrape_jobs_by_index(i: int, keyword: str, job_age_seconds: int):
+    url = f"https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords={keyword}&location=United%20States&start={i}&f_TPR=r{job_age_seconds}"
     response = proxy_request(url)
     return response.decode('utf-8')
 
@@ -131,7 +129,3 @@ def process_job_card(job_card):
             upload_html(html_str, s3_key, S3_BUCKET_NAME)
         except Exception as e:
             logger.error(f"Error scraping job {job_id}: {e}")
-
-if __name__ == "__main__":
-    scrape_jobs(SOFTWARE_ENGINEER_KEYWORD)
-    scrape_jobs(DATA_ENGINEER_KEYWORD)
