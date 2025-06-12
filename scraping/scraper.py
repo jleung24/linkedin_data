@@ -11,9 +11,9 @@ from concurrent.futures import ThreadPoolExecutor
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 
-from helpers.read_config import read_config
-from database.s3_client import upload_html
-from helpers import logger
+from linkedin_data.helpers.read_config import read_config
+from linkedin_data.database.s3_client import upload_html
+from linkedin_data.helpers import logger
 
 
 S3_BUCKET_NAME = read_config("s3")["bucket_name"]

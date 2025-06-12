@@ -3,7 +3,7 @@ import gzip
 import io
 import logging
 
-from helpers import logger
+from linkedin_data.helpers import logger
 
 
 logger = logging.getLogger('scraping_logger')
