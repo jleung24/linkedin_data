@@ -79,6 +79,9 @@ def parse_job_html(html: str, job_id: str, date: str, parsed_job_data: dict):
     description = job_soup.select_one(".show-more-less-html__markup").get_text(strip=True)
     level = job_soup.select_one(".description__job-criteria-text").get_text(strip=True)
 
+    if len(title) > 100:
+        title = title[:100]
+
     code_tag = job_soup.select_one("#joinUrlWithRedirect")
     if code_tag and code_tag.string:
         match = re.search(r'"(https://[^"]+)"', code_tag.string)
