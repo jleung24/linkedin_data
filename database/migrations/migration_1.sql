@@ -5,7 +5,8 @@ CREATE TABLE jobs (
     location VARCHAR(50),
     level VARCHAR(50),
     years_experience_min INTEGER,
-    years_experience_max INTEGER
+    years_experience_max INTEGER,
+    url VARCHAR(200)
 );
 
 CREATE TABLE skills (
