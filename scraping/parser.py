@@ -95,7 +95,9 @@ def parse_job_html(html: str, job_id: str, date: str, parsed_job_data: dict):
     except:
         salary_max = salary_min = None
     
-    found_skills = [skill for skill in SKILLS_KEYWORDS if skill.lower() in description.lower()]
+    found_skills = []
+    if description:
+        found_skills = [skill for skill in SKILLS_KEYWORDS if skill.lower() in description.lower()]
 
     years_experience_min = None
     years_experience_max = None

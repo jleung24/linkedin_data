@@ -6,7 +6,7 @@ CREATE TABLE jobs (
     level VARCHAR(50),
     years_experience_min INTEGER,
     years_experience_max INTEGER,
-    url VARCHAR(200),
+    url VARCHAR(300),
     posted_date DATE
 );
 
