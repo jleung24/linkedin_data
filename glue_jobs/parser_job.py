@@ -35,7 +35,8 @@ from linkedin_data.helpers.read_config import read_config
 import psycopg2
 
 rds_config = read_config('redshift')
-parsed_job_data = process_s3(date.today())
+yesterday = date.today() - timedelta(days=1)
+parsed_job_data = process_s3(yesterday)
 
 redshift_user = rds_config['username']
 redshift_password = rds_config['password']
@@ -55,6 +56,14 @@ skill_name_to_id = {row[1]: row[0] for row in skills_rows}
 
 for job_id, job in parsed_job_data.items():
     # Insert job
+    print("""
+        INSERT INTO jobs (job_id, title, company, location, level, years_experience_min, years_experience_max, url, posted_date)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
+    """, (
+        job_id, job["title"], job["company"], job["location"], job["level"],
+        job["years_experience_min"], job["years_experience_max"], job["url"], job["date"]
+    ))
+    
     cur.execute("""
         INSERT INTO jobs (job_id, title, company, location, level, years_experience_min, years_experience_max, url, posted_date)
         VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)

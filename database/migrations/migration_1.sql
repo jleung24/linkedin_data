@@ -1,12 +1,12 @@
 CREATE TABLE jobs (
     job_id BIGINT PRIMARY KEY,
     title VARCHAR(100),
-    company VARCHAR(50),
+    company VARCHAR(100),
     location VARCHAR(50),
     level VARCHAR(50),
     years_experience_min INTEGER,
     years_experience_max INTEGER,
-    url VARCHAR(300),
+    url VARCHAR(500),
     posted_date DATE
 );
 
