@@ -55,40 +55,36 @@ skills_rows = cur.fetchall()
 skill_name_to_id = {row[1]: row[0] for row in skills_rows}
 
 for job_id, job in parsed_job_data.items():
-    # Insert job
-    print("""
-        INSERT INTO jobs (job_id, title, company, location, level, years_experience_min, years_experience_max, url, posted_date)
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
-    """, (
-        job_id, job["title"], job["company"], job["location"], job["level"],
-        job["years_experience_min"], job["years_experience_max"], job["url"], job["date"]
-    ))
-    
-    cur.execute("""
-        INSERT INTO jobs (job_id, title, company, location, level, years_experience_min, years_experience_max, url, posted_date)
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
-    """, (
-        job_id, job["title"], job["company"], job["location"], job["level"],
-        job["years_experience_min"], job["years_experience_max"], job["url"], job["date"]
-    ))
-    
-    # Insert salary
-    if job["salary_min"] is not None:
+    try:
+        # Insert job
         cur.execute("""
-            INSERT INTO salary (job_id, amount_min, amount_max, time_unit, currency)
-            VALUES (%s,%s,%s,%s,%s)
+            INSERT INTO jobs (job_id, title, company, location, level, years_experience_min, years_experience_max, url, posted_date)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
         """, (
-            job_id, job["salary_min"], job["salary_max"], job["salary_unit"], "USD"
+            job_id, job["title"], job["company"], job["location"], job["level"],
+            job["years_experience_min"], job["years_experience_max"], job["url"], job["date"]
         ))
-
-    # Insert job_skills
-    for skill in job["found_skills"]:
-        skill_id = skill_name_to_id.get(skill)
-        if skill_id:
+        
+        # Insert salary
+        if job["salary_min"] is not None:
             cur.execute("""
-                INSERT INTO job_skills (job_id, skill_id)
-                VALUES (%s, %s)
-            """, (job_id, skill_id))
+                INSERT INTO salary (job_id, amount_min, amount_max, time_unit, currency)
+                VALUES (%s,%s,%s,%s,%s)
+            """, (
+                job_id, job["salary_min"], job["salary_max"], job["salary_unit"], "USD"
+            ))
+    
+        # Insert job_skills
+        for skill in job["found_skills"]:
+            skill_id = skill_name_to_id.get(skill)
+            if skill_id:
+                cur.execute("""
+                    INSERT INTO job_skills (job_id, skill_id)
+                    VALUES (%s, %s)
+                """, (job_id, skill_id))
+    except Exception as e:
+        print(f"Error inserting job_id {job_id}: {e}")
+        conn.rollback()
 
 conn.commit()
 cur.close()
