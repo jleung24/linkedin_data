@@ -34,14 +34,14 @@ SKILLS_KEYWORDS = [
     "Data Warehousing", "Hadoop", "Spark", "Big Data Systems", "Business Intelligence", "Analytics", "Machine Learning"
 ]
 
-KEYWORDS = r'(?:experience|development|engineering)'
+KEYWORDS = r'(?:experience|development|engineering|engineer)'
 YEARS_PATTERNS = [
-    r'(\d+)\s*(?:\+)?\s*(?:years?|yrs?)(?:\s*of)?(?:[^\.\n]{0,200}?)' + KEYWORDS,
-    r'(one|two|three|four|five|six|seven|eight|nine|ten)\s+years?(?:\s*of)?(?:[^\.\n]{0,200}?)' + KEYWORDS,
-    r'(\d+)\s*[-–]\s*(\d+)\s*(?:years?|yrs?)(?:\s*of)?(?:[^\.\n]{0,200}?)' + KEYWORDS,                # e.g., 2-4 years, 5–7 yrs
-    r'(\d+)\s*(?:to|and|through)\s*(\d+)\s*(?:years?|yrs?)(?:\s*of)?(?:[^\.\n]{0,200}?)' + KEYWORDS,  # e.g., 3 to 5 years, 1 and 3 yrs
-    r'between\s+(\d+)\s+and\s+(\d+)\s*(?:years?|yrs?)(?:\s*of)?(?:[^\.\n]{0,200}?)' + KEYWORDS,       # e.g., between 1 and 3 years
-    r'minimum\s+(\d+)\s*(?:years?|yrs?).*maximum\s+(\d+)\s*(?:years?|yrs?)(?:\s*of)?(?:[^\.\n]{0,200}?)' + KEYWORDS, # e.g., minimum 2 years, maximum 5 years
+    r'(\d+)(?:\))?\s*(?:\+)?\s*(?:years?|yrs?)(?:[^\.\n]{0,40}?)' + KEYWORDS,
+    r'(one|two|three|four|five|six|seven|eight|nine|ten)\s+years?(?:[^\.\n]{0,40}?)' + KEYWORDS,
+    r'(\d+)\s*[-–]\s*(\d+)\s*(?:years?|yrs?)(?:[^\.\n]{0,40}?)' + KEYWORDS,                # e.g., 2-4 years, 5–7 yrs
+    r'(\d+)\s*(?:to|and|through)\s*(\d+)\s*(?:years?|yrs?)(?:[^\.\n]{0,40}?)' + KEYWORDS,  # e.g., 3 to 5 years, 1 and 3 yrs
+    r'between\s+(\d+)\s+and\s+(\d+)\s*(?:years?|yrs?)(?:[^\.\n]{0,40}?)' + KEYWORDS,       # e.g., between 1 and 3 years
+    r'minimum\s+(\d+)\s*(?:years?|yrs?).*maximum\s+(\d+)\s*(?:years?|yrs?)(?:[^\.\n]{0,40}?)' + KEYWORDS, # e.g., minimum 2 years, maximum 5 years
 ]
 WORD_TO_NUM = {
     'one': '1',
