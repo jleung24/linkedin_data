@@ -54,9 +54,9 @@ def proxy_request(url: str, max_retries: int = 3) -> bytes:
             time.sleep(random.uniform(2, 5))
             opener = build_random_opener() 
             with opener.open(url) as response:
-                logger.info(f"Response size: {len(response.read())} bytes")
                 content_encoding = response.headers.get('Content-Encoding')
                 content = response.read()
+                logger.info(f"Response size: {len(content)} bytes")
                 if content_encoding == 'gzip':
                     content = gzip.decompress(content)
                 return content
