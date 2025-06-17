@@ -1,3 +1,4 @@
+import gzip
 import random
 import time
 import logging
@@ -41,7 +42,7 @@ def build_random_opener() -> OpenerDirector:
 
     opener = urllib.request.build_opener(proxy_handler)
     random_user_agent = ua.random
-    opener.addheaders = [("User-Agent", random_user_agent)]
+    opener.addheaders = [("User-Agent", random_user_agent),("Accept-Encoding", "gzip, deflate")]
 
     return opener
 
@@ -53,7 +54,12 @@ def proxy_request(url: str, max_retries: int = 3) -> bytes:
             time.sleep(random.uniform(2, 5))
             opener = build_random_opener() 
             with opener.open(url) as response:
-                return response.read()
+                logger.info(f"Response size: {len(response.read())} bytes")
+                content_encoding = response.headers.get('Content-Encoding')
+                content = response.read()
+                if content_encoding == 'gzip':
+                    content = gzip.decompress(content)
+                return content
 
         except Exception as e:
             logger.error(f"Attempt {attempt} failed for {url}: {e}")
