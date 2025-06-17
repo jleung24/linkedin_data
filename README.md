@@ -1,6 +1,6 @@
 ```mermaid
-  graph TD;
-      A[Webscraper (Glue Job)] --> B[S3 Bucket (compressed HTML)];
-      B --> C[Data Processing (Glue Job)];
-      C --> D[Redshift];
+flowchart TD;
+    A["Webscraper<br>(Glue Job)"] --> B["S3 Bucket<br>(compressed HTML)"];
+    B --> C["Data Processing<br>(Glue Job)"];
+    C --> D[Redshift];
 ```
