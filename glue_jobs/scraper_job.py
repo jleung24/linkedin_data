@@ -34,6 +34,6 @@ from linkedin_data.scraping.scraper import scrape_jobs
 
 sw_key = "Software%20Engineer"
 de_key = "Data%20Engineer"
-job_age_seconds = 3600
+job_age_seconds = 3800
 scrape_jobs(sw_key, job_age_seconds)
 scrape_jobs(de_key, job_age_seconds)
