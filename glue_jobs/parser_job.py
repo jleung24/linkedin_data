@@ -35,7 +35,9 @@ import pandas as pd
 import boto3
 from linkedin_data.scraping.parser import process_s3
 from linkedin_data.helpers.read_config import read_config
+from linkedin_data.helpers import logger
 
+logger = logging.getLogger('scraping_logger')
 rds_config = read_config('redshift')
 yesterday = date.today() - timedelta(days=1)
 parsed_job_data = process_s3(yesterday)
@@ -63,6 +65,7 @@ salary_data = []
 job_skills_data = []
 
 for job_id, job in parsed_job_data.items():
+    logger.info(f"Processing job id:    {job_id}")
     jobs_data.append([
         job_id, job["title"], job["company"], job["location"], job["level"],
         job["years_experience_min"], job["years_experience_max"], job["url"], job["date"]
@@ -76,6 +79,7 @@ for job_id, job in parsed_job_data.items():
         if skill_id:
             job_skills_data.append([job_id, skill_id])
 
+logger.info("Done processing jobs...")
 jobs_df = pd.DataFrame(jobs_data, columns=[
     'job_id', 'title', 'company', 'location', 'level',
     'years_experience_min', 'years_experience_max', 'url', 'posted_date'
@@ -86,6 +90,8 @@ salary_df = pd.DataFrame(salary_data, columns=[
 ])
 
 job_skills_df = pd.DataFrame(job_skills_data, columns=['job_id', 'skill_id'])
+
+logger.info("Done creating data frames")
 
 s3 = boto3.client('s3')
 bucket = 'temp817'
@@ -102,6 +108,8 @@ s3.upload_file(salary_csv, bucket, f'{prefix}salary.csv')
 job_skills_csv = '/tmp/job_skills.csv'
 job_skills_df.to_csv(job_skills_csv, index=False)
 s3.upload_file(job_skills_csv, bucket, f'{prefix}job_skills.csv')
+
+logger.info("Done uploading to S3")
 
 iam_role = 'arn:aws:iam::385122037390:role/service-role/AmazonRedshift-CommandsAccessRole-20250618T175826'  
 
