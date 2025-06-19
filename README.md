@@ -1,7 +1,15 @@
 ```mermaid
 flowchart TD;
-    A["Webscraper<br>(Glue Job)"] --> B["S3 Bucket<br>(compressed HTML)"];
-    B --> C["Data Processing<br>(Glue Job)"];
-    C --> D["S3 Bucket<br>(CSV for bulk loading)"];
-    D --> E[Redshift];
+    subgraph air["Apache Airflow"]
+    subgraph glue1["Glue Job"]
+    A["Webscraper"] --> |Compressed HTML| B(["S3 Bucket"]);
+    end
+    subgraph glue2["Glue Job"]
+    C["Data Processing"];
+    C --> |CSV| D(["S3 Bucket"]);
+    D --> |Bulk Load| E[(Redshift)];
+    end
+    glue1 --> glue2
+    end
+    style air fill:darkslategrey;
 ```
