@@ -33,6 +33,7 @@ except Exception as e:
 import psycopg2
 import pandas as pd
 import boto3
+import logging
 from linkedin_data.scraping.parser import process_s3
 from linkedin_data.helpers.read_config import read_config
 from linkedin_data.helpers import logger
