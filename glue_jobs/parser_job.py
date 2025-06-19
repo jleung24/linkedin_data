@@ -80,10 +80,13 @@ for job_id, job in parsed_job_data.items():
             job_skills_data.append([job_id, skill_id])
 
 logger.info("Done processing jobs...")
+
 jobs_df = pd.DataFrame(jobs_data, columns=[
     'job_id', 'title', 'company', 'location', 'level',
     'years_experience_min', 'years_experience_max', 'url', 'posted_date'
 ])
+for col in ['years_experience_min', 'years_experience_max']:
+    jobs_df[col] = jobs_df[col].apply(lambda x: int(x) if pd.notnull(x) and x != '' else '')
 
 salary_df = pd.DataFrame(salary_data, columns=[
     'job_id', 'amount_min', 'amount_max', 'time_unit', 'currency'
