@@ -86,6 +86,10 @@ def parse_job_html(html: str, job_id: str, date: str, parsed_job_data: dict):
     company = re.sub(r'[^\x20-\x7E]', '', company)
     if len(company) > 100:
         company = company[:100]
+    
+    location = re.sub(r'[^\x20-\x7E]', '', location)
+    if len(location) > 50:
+        location = location[:50]
 
     code_tag = job_soup.select_one("#joinUrlWithRedirect")
     if code_tag and code_tag.string:
